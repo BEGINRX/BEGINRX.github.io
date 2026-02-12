@@ -1,0 +1,32 @@
+---
+const navItems = [
+  { name: '主页', href: '/' },
+  { name: '经历', href: '/experience' },
+  { name: '记录', href: '/records' },
+  { name: '留言板', href: '/guestbook' },
+];
+---
+
+<header class="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-sm dark:bg-gray-900/80">
+  <nav class="container flex h-16 items-center justify-between">
+    <a href="/" class="flex items-center gap-2 font-bold text-xl">
+      <span class="text-primary-600">My</span>Site
+    </a>
+
+    <ul class="flex items-center gap-6">
+      {navItems.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class:list={[
+              "text-sm font-medium transition-colors hover:text-primary-600",
+              { "text-primary-600": Astro.url.pathname === item.href },
+            ]}
+          >
+            {item.name}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>

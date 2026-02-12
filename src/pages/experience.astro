@@ -1,0 +1,91 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const experiences = await getCollection('experience');
+const sortedExperiences = experiences.sort(
+  (a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf()
+);
+---
+
+<Layout title="经历 - 我的个人网站" description="我的工作经历">
+  <section class="py-16">
+    <div class="container">
+      <h1 class="mb-12 text-center text-4xl font-bold">我的经历</h1>
+
+      <div class="relative">
+        <!-- Timeline Line -->
+        <div class="absolute left-0 top-0 h-full w-0.5 -translate-x-1/2 bg-gray-200 dark:bg-gray-700 md:left-1/2" />
+
+        <!-- Timeline Items -->
+        <div class="space-y-12">
+          {sortedExperiences.map((exp, index) => (
+            <div
+              class:list={[
+                "relative md:grid md:grid-cols-2 md:gap-8 md:items-center",
+                { "md:flex-row-reverse": index % 2 === 1 }
+              ]}
+            >
+              <!-- Timeline Dot -->
+              <div class="absolute left-0 top-6 z-10 h-4 w-4 -translate-x-1/2 rounded-full bg-primary-600 md:left-1/2" />
+
+              <!-- Date Badge (Mobile) -->
+              <div class="mb-4 pl-8 md:hidden">
+                <span class="inline-block rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
+                  {exp.data.startDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}
+                  {exp.data.current ? ' - 至今' : ` - ${exp.data.endDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}`}
+                </span>
+              </div>
+
+              <!-- Content Card -->
+              <div class="card md:col-span-1">
+                {exp.data.image && (
+                  <div class="mb-4 overflow-hidden rounded-lg">
+                    <img
+                      src={exp.data.image}
+                      alt={`${exp.data.company} - ${exp.data.position}`}
+                      class="h-48 w-full object-cover"
+                    />
+                  </div>
+                )}
+
+                <h3 class="mb-1 text-xl font-bold">{exp.data.position}</h3>
+                <p class="mb-4 text-primary-600">{exp.data.company}</p>
+
+                <div class="prose prose-gray dark:prose-invert max-w-none">
+                  <p class="whitespace-pre-line">{exp.render()}</p>
+                </div>
+
+                {exp.data.tags.length > 0 && (
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    {exp.data.tags.map((tag) => (
+                      <span class="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                <div class="hidden md:block">
+                  <span class="inline-block rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
+                    {exp.data.startDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}
+                    {exp.data.current ? ' - 至今' : ` - ${exp.data.endDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}`}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Empty column for spacing -->
+              <div class="hidden md:block md:col-span-1"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {sortedExperiences.length === 0 && (
+        <div class="card text-center text-gray-600 dark:text-gray-400">
+          <p>暂无经历记录</p>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>

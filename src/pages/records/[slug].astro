@@ -1,0 +1,141 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import Giscus from '../../components/Giscus.astro';
+
+export async function getStaticPaths() {
+  const records = await getCollection('records');
+  return records.map((record) => ({
+    params: { slug: record.slug },
+    props: { record },
+  }));
+}
+
+const { record } = Astro.props;
+const { Content } = await record.render();
+
+// Get adjacent records
+const allRecords = await getCollection('records');
+const sortedRecords = allRecords.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const currentIndex = sortedRecords.findIndex(r => r.slug === record.slug);
+const prevRecord = currentIndex > 0 ? sortedRecords[currentIndex - 1] : null;
+const nextRecord = currentIndex < sortedRecords.length - 1 ? sortedRecords[currentIndex + 1] : null;
+---
+
+<Layout title={`${record.data.title} - 个人记录`} description={record.data.title}>
+  <article class="py-16">
+    <div class="container">
+      <!-- Back Button -->
+      <a href="/records" class="mb-8 inline-flex items-center text-sm text-gray-600 hover:text-primary-600 dark:text-gray-400">
+        ← 返回记录列表
+      </a>
+
+      <!-- Article Header -->
+      <header class="mb-8 border-b pb-8">
+        <div class="mb-4">
+          <span class:list={[
+            "inline-block rounded-full px-3 py-1 text-sm font-medium",
+            {
+              "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300": record.data.type === 'log',
+              "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300": record.data.type === 'doc',
+              "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300": record.data.type === 'quote',
+            }
+          ]}>
+            {record.data.type === 'log' && '日志'}
+            {record.data.type === 'doc' && '文档'}
+            {record.data.type === 'quote' && '短句'}
+          </span>
+        </div>
+
+        <h1 class="mb-4 text-3xl font-bold md:text-4xl">
+          {record.data.title}
+        </h1>
+
+        <p class="text-gray-600 dark:text-gray-400">
+          {record.data.date.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </p>
+      </header>
+
+      <!-- Featured Image -->
+      {record.data.image && (
+        <div class="mb-8 overflow-hidden rounded-xl">
+          <img
+            src={record.data.image}
+            alt={record.data.title}
+            class="h-auto w-full"
+          />
+        </div>
+      )}
+
+      <!-- Article Content -->
+      <div class="prose prose-lg prose-gray max-w-none dark:prose-invert">
+        <Content />
+      </div>
+
+      <!-- Navigation -->
+      <nav class="mt-12 border-t pt-8">
+        <div class="flex justify-between">
+          {nextRecord ? (
+            <a
+              href={`/records/${nextRecord.slug}`}
+              class="flex-1 text-left"
+            >
+              <span class="text-sm text-gray-600 dark:text-gray-400">← 上一篇</span>
+              <p class="font-medium hover:text-primary-600">
+                {nextRecord.data.title}
+              </p>
+            </a>
+          ) : (
+            <div class="flex-1"></div>
+          )}
+
+          {prevRecord ? (
+            <a
+              href={`/records/${prevRecord.slug}`}
+              class="flex-1 text-right"
+            >
+              <span class="text-sm text-gray-600 dark:text-gray-400">下一篇 →</span>
+              <p class="font-medium hover:text-primary-600">
+                {prevRecord.data.title}
+              </p>
+            </a>
+          ) : (
+            <div class="flex-1"></div>
+          )}
+        </div>
+      </nav>
+    </div>
+  </article>
+
+  <!-- Comments -->
+  <Giscus />
+</Layout>
+
+<style>
+  /* Prose styles adjustments */
+  .prose {
+    @apply mx-auto;
+  }
+
+  .prose img {
+    @apply rounded-lg;
+  }
+
+  .prose pre {
+    @apply rounded-lg bg-gray-100 p-4 dark:bg-gray-800;
+  }
+
+  .prose code {
+    @apply rounded bg-gray-100 px-1 py-0.5 text-sm dark:bg-gray-800;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0;
+  }
+</style>

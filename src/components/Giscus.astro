@@ -1,0 +1,48 @@
+---
+// Giscus comment system
+// You need to configure this with your own GitHub repository details
+// Visit https://giscus.app to generate your configuration
+
+const giscusConfig = {
+  repo: 'BEGINRX/BEGINRX.github.io', // Replace with your repo
+  repoId: 'R_kgDON...', // Replace with your repo ID
+  category: 'Announcements', // Replace with your category
+  categoryId: 'DIC_kwDON...', // Replace with your category ID
+  mapping: 'pathname',
+  strict: '0',
+  reactionsEnabled: '1',
+  emitMetadata: '0',
+  inputPosition: 'bottom',
+  lang: 'zh-CN',
+  theme: 'preferred_color_scheme',
+};
+---
+
+<!-- Giscus Comments -->
+<section class="py-12 border-t">
+  <div class="container">
+    <h2 class="mb-8 text-center text-2xl font-bold">评论</h2>
+    <script src="https://giscus.app/client.js"
+      data-repo={giscusConfig.repo}
+      data-repo-id={giscusConfig.repoId}
+      data-category={giscusConfig.category}
+      data-category-id={giscusConfig.categoryId}
+      data-mapping={giscusConfig.mapping}
+      data-strict={giscusConfig.strict}
+      data-reactions-enabled={giscusConfig.reactionsEnabled}
+      data-emit-metadata={giscusConfig.emitMetadata}
+      data-input-position={giscusConfig.inputPosition}
+      data-theme={giscusConfig.theme}
+      data-lang={giscusConfig.lang}
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+</section>
+
+<style>
+  /* Hide giscus until loaded */
+  .giscus-frame {
+    @apply rounded-lg;
+  }
+</style>

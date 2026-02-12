@@ -1,0 +1,49 @@
+---
+const themeScript = `
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+
+  if (theme === 'light') {
+    document.documentElement.classList.remove('dark');
+  } else {
+    document.documentElement.classList.add('dark');
+  }
+
+  window.localStorage.setItem('theme', theme);
+
+  const handleToggle = () => {
+    const newTheme = localStorage.getItem('theme') === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', newTheme);
+    if (newTheme === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+  };
+
+  window.addEventListener('theme-toggle', handleToggle);
+`;
+---
+
+<button
+  id="theme-toggle"
+  class="fixed bottom-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-gray-900 text-white shadow-lg transition-transform hover:scale-110 dark:bg-gray-100 dark:text-gray-900"
+  aria-label="Toggle theme"
+  onclick="window.dispatchEvent(new CustomEvent('theme-toggle'))"
+>
+  <span class="dark:hidden">🌙</span>
+  <span class="hidden dark:block">☀️</span>
+</button>
+
+<script define:vars={{ themeScript }}>
+  const script = document.createElement('script');
+  script.textContent = themeScript;
+  document.head.prepend(script);
+</script>
