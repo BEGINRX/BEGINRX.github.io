@@ -1,6 +1,6 @@
 ---
 company: 技术公司
-position: 前端工程师
+position: 算法工程师
 startDate: 2023-01-01
 endDate: null
 current: true
