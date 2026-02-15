@@ -1,129 +1,121 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
-
-// Get recent records for preview
-const allRecords = await getCollection('records');
-const recentRecords = allRecords
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+const tags = ['神经科学', '脑机接口', '可穿戴设备', '人工智能'];
 ---
 
-<Layout title="主页 - 我的个人网站" description="欢迎来到我的个人网站">
-  <!-- Hero Section -->
-  <section class="py-20">
+<Layout title="主页 - 李没病" description="你好，这里是李没病">
+  <section class="min-h-screen flex items-center bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-blue-950">
     <div class="container">
-      <div class="flex flex-col items-center gap-8 text-center md:flex-row md:text-left">
-        <div class="relative">
-          <div class="h-40 w-40 overflow-hidden rounded-full bg-gradient-to-br from-primary-400 to-primary-600 p-1">
-            <div class="flex h-full w-full items-center justify-center rounded-full bg-gray-100 text-6xl dark:bg-gray-800">
-              👋
-            </div>
-          </div>
-        </div>
-
-        <div class="flex-1">
-          <h1 class="mb-4 text-4xl font-bold md:text-5xl">
-            你好，我是 <span class="text-primary-600">李没病</span>
+      <div class="flex items-center justify-between">
+        <!-- 左侧打字文字 -->
+        <div class="max-w-2xl">
+          <h1 class="text-6xl md:text-7xl lg:text-8xl font-bold leading-tight">
+            <span class="typing-container block">
+              <span id="line1" class="typing-line"></span>
+            </span>
+            <span class="typing-container block">
+              <span id="line2" class="typing-line"></span>
+            </span>
           </h1>
-          <p class="mb-6 text-xl text-gray-600 dark:text-gray-400">
-            这是我的自留地
-          </p>
-          <div class="flex flex-wrap gap-3">
-            <a href="/experience" class="btn btn-primary">
-              查看我的经历 →
-            </a>
-            <a href="/records" class="btn btn-secondary">
-              记录
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Basic Info Section -->
-  <section class="py-12">
-    <div class="container">
-      <h2 class="mb-8 text-center text-2xl font-bold">关于我</h2>
-      <div class="grid gap-6 md:grid-cols-3">
-        <div class="card text-center">
-          <div class="mb-3 text-3xl">📧</div>
-          <h3 class="mb-2 font-semibold">邮箱</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            <a href="mailto:your@email.com" class="hover:text-primary-600">
-              15247409009@163.com
-            </a>
-          </p>
         </div>
 
-        <div class="card text-center">
-          <div class="mb-3 text-3xl">💻</div>
-          <h3 class="mb-2 font-semibold">GitHub</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            <a href="https://github.com/BEGINRX" target="_blank" rel="noopener" class="hover:text-primary-600">
-              @BEGINRX
-            </a>
-          </p>
-        </div>
-
-        <div class="card text-center">
-          <div class="mb-3 text-3xl">🔧</div>
-          <h3 class="mb-2 font-semibold">技术栈</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            Python, Matlab
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Recent Records Section -->
-  <section class="py-12">
-    <div class="container">
-      <div class="mb-8 flex items-center justify-between">
-        <h2 class="text-2xl font-bold">最新记录</h2>
-        <a href="/records" class="text-sm text-primary-600 hover:underline">
-          查看全部 →
-        </a>
-      </div>
-
-      {recentRecords.length > 0 ? (
-        <div class="grid gap-6 md:grid-cols-3">
-          {recentRecords.map((record) => (
-            <a href={`/records/${record.slug}`} class="card block transition-transform hover:-translate-y-1">
-              {record.data.image && (
-                <div class="mb-4 aspect-video overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
-                  <img
-                    src={record.data.image}
-                    alt={record.data.title}
-                    class="h-full w-full object-cover"
-                  />
-                </div>
-              )}
-              <div class="mb-2 text-sm text-primary-600">
-                {record.data.type === 'log' && '日志'}
-                {record.data.type === 'doc' && '文档'}
-                {record.data.type === 'quote' && '短句'}
-              </div>
-              <h3 class="mb-2 font-semibold">{record.data.title}</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                {record.data.date.toLocaleDateString('zh-CN')}
-              </p>
-            </a>
+        <!-- 右侧标签 -->
+        <div class="flex flex-col gap-4">
+          {tags.map((tag) => (
+            <span class="side-tag">{tag}</span>
           ))}
         </div>
-      ) : (
-        <div class="card text-center text-gray-600 dark:text-gray-400">
-          <p>暂无记录，敬请期待...</p>
-        </div>
-      )}
+      </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  section:nth-child(even) {
-    @apply bg-gray-50 dark:bg-gray-800/50;
+  .side-tag {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.8), rgba(37, 99, 235, 0.8));
+    color: white;
+    border-radius: 9999px;
+    font-size: 1.125rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+    white-space: nowrap;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+
+  .side-tag:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, rgba(30, 58, 138, 1), rgba(37, 99, 235, 1));
+  }
+
+  .typing-container {
+    min-height: 1.2em;
+  }
+
+  .typing-line.typing::after {
+    content: '|';
+    animation: blink 1s infinite;
+    margin-left: 2px;
+    color: #1e3a8a;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
   }
 </style>
+
+<script>
+  const line1 = document.getElementById('line1');
+  const line2 = document.getElementById('line2');
+
+  async function typeText(element, htmlContent, speed = 150) {
+    element.classList.add('typing');
+    await new Promise(resolve => setTimeout(resolve, speed));
+
+    // 第一行：你好！
+    element.textContent = '你好！';
+
+    await new Promise(resolve => setTimeout(resolve, speed));
+    element.classList.remove('typing');
+  }
+
+  async function typeText2(element, speed = 150) {
+    element.classList.add('typing');
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // 第二行：我是 李没病（分颜色）
+    const text1 = '我是';
+    const text2 = ' 李没病';
+
+    element.innerHTML = '';
+
+    // 打字"我是"
+    for (let i = 0; i < text1.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'text-gray-900 dark:text-white';
+      span.textContent = text1[i];
+      element.appendChild(span);
+      await new Promise(resolve => setTimeout(resolve, speed));
+    }
+
+    // 打字" 李没病"
+    for (let i = 0; i < text2.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'text-blue-700 dark:text-blue-300';
+      span.textContent = text2[i];
+      element.appendChild(span);
+      await new Promise(resolve => setTimeout(resolve, speed));
+    }
+
+    await new Promise(resolve => setTimeout(resolve, speed));
+    element.classList.remove('typing');
+  }
+
+  async function startTyping() {
+    await typeText(line1);
+    await typeText2(line2);
+  }
+
+  startTyping();
+</script>

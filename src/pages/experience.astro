@@ -6,86 +6,225 @@ const experiences = await getCollection('experience');
 const sortedExperiences = experiences.sort(
   (a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf()
 );
+
+// 分离工作和教育经历
+const workExperiences = sortedExperiences.filter(exp =>
+  exp.data.position.includes('工程师') ||
+  exp.data.position.includes('开发') ||
+  exp.data.position.includes('专员') ||
+  exp.data.company.includes('公司')
+);
+
+const eduExperiences = sortedExperiences.filter(exp =>
+  exp.data.position.includes('硕士') ||
+  exp.data.position.includes('本科') ||
+  exp.data.company.includes('大学') ||
+  exp.data.position.includes('博士')
+);
+
+// 渲染每个经历的 Markdown 内容
+const renderedWorkExperiences = await Promise.all(
+  workExperiences.map(async (exp) => {
+    const { html } = await exp.render();
+    return { ...exp, renderedHtml: html };
+  })
+);
+
+const renderedEduExperiences = await Promise.all(
+  eduExperiences.map(async (exp) => {
+    const { html } = await exp.render();
+    return { ...exp, renderedHtml: html };
+  })
+);
 ---
 
-<Layout title="经历 - 我的个人网站" description="我的工作经历">
-  <section class="py-16">
-    <div class="container">
-      <h1 class="mb-12 text-center text-4xl font-bold">我的经历</h1>
+<Layout title="经历 - 我的个人网站" description="我的工作与教育经历">
+  <!-- 工作经历部分 -->
+  <section class="min-h-screen py-20 relative overflow-hidden gradient-red">
+    <!-- 左侧"工作"字样 -->
+    <div class="absolute left-8 top-1/2 -translate-y-1/2 text-white text-6xl md:text-8xl font-bold writing-mode-vertical opacity-30">
+      工作
+    </div>
 
-      <div class="relative">
-        <!-- Timeline Line -->
-        <div class="absolute left-0 top-0 h-full w-0.5 -translate-x-1/2 bg-gray-200 dark:bg-gray-700 md:left-1/2" />
-
-        <!-- Timeline Items -->
-        <div class="space-y-12">
-          {sortedExperiences.map((exp, index) => (
-            <div
-              class:list={[
-                "relative md:grid md:grid-cols-2 md:gap-8 md:items-center",
-                { "md:flex-row-reverse": index % 2 === 1 }
-              ]}
-            >
-              <!-- Timeline Dot -->
-              <div class="absolute left-0 top-6 z-10 h-4 w-4 -translate-x-1/2 rounded-full bg-primary-600 md:left-1/2" />
-
-              <!-- Date Badge (Mobile) -->
-              <div class="mb-4 pl-8 md:hidden">
-                <span class="inline-block rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
-                  {exp.data.startDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}
-                  {exp.data.current ? ' - 至今' : ` - ${exp.data.endDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}`}
-                </span>
-              </div>
-
-              <!-- Content Card -->
-              <div class="card md:col-span-1">
-                {exp.data.image && (
-                  <div class="mb-4 overflow-hidden rounded-lg">
-                    <img
-                      src={exp.data.image}
-                      alt={`${exp.data.company} - ${exp.data.position}`}
-                      class="h-48 w-full object-cover"
-                    />
-                  </div>
-                )}
-
-                <h3 class="mb-1 text-xl font-bold">{exp.data.position}</h3>
-                <p class="mb-4 text-primary-600">{exp.data.company}</p>
-
-                <div class="prose prose-gray dark:prose-invert max-w-none">
-                  <p class="whitespace-pre-line">{exp.render()}</p>
-                </div>
-
-                {exp.data.tags.length > 0 && (
-                  <div class="mt-4 flex flex-wrap gap-2">
-                    {exp.data.tags.map((tag) => (
-                      <span class="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                <div class="hidden md:block">
-                  <span class="inline-block rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
-                    {exp.data.startDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}
-                    {exp.data.current ? ' - 至今' : ` - ${exp.data.endDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}`}
-                  </span>
-                </div>
-              </div>
-
-              <!-- Empty column for spacing -->
-              <div class="hidden md:block md:col-span-1"></div>
+    <div class="container relative z-10">
+      <div class="space-y-8">
+        {renderedWorkExperiences.map((exp) => (
+          <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-8">
+            <!-- 时间 -->
+            <div class="mb-4">
+              <span class="inline-block rounded-full bg-red-200 px-4 py-2 text-sm font-medium text-red-800 dark:bg-red-900/70 dark:text-red-200">
+                {exp.data.startDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}
+                {exp.data.current ? ' - 至今' : ` - ${exp.data.endDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}`}
+              </span>
             </div>
-          ))}
-        </div>
+
+            <!-- 公司和职位 -->
+            <h3 class="mb-2 text-2xl font-bold text-gray-900 dark:text-white">{exp.data.position}</h3>
+            <p class="mb-6 text-xl text-red-600 dark:text-red-400">{exp.data.company}</p>
+
+            <!-- 内容 -->
+            <div class="prose prose-gray dark:prose-invert max-w-none prose-sm" set:html={exp.renderedHtml} />
+
+            <!-- 标签 -->
+            {exp.data.tags && Array.isArray(exp.data.tags) && exp.data.tags.length > 0 && (
+              <div class="mt-6 flex flex-wrap gap-2">
+                {exp.data.tags.map((tag) => (
+                  <span class="rounded-full bg-red-100 px-3 py-1 text-sm text-red-700 dark:bg-red-900/40 dark:text-red-300">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
-      {sortedExperiences.length === 0 && (
-        <div class="card text-center text-gray-600 dark:text-gray-400">
-          <p>暂无经历记录</p>
+      {renderedWorkExperiences.length === 0 && (
+        <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-xl p-12 text-center text-gray-600 dark:text-gray-400">
+          <p>暂无工作经历</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- 教育经历部分 -->
+  <section class="min-h-screen py-20 relative overflow-hidden gradient-blue">
+    <!-- 右侧"学习"字样 -->
+    <div class="absolute right-8 top-1/2 -translate-y-1/2 text-white text-6xl md:text-8xl font-bold writing-mode-vertical opacity-30">
+      学习
+    </div>
+
+    <div class="container relative z-10">
+      <div class="space-y-8">
+        {renderedEduExperiences.map((exp) => (
+          <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-8">
+            <!-- 时间 -->
+            <div class="mb-4">
+              <span class="inline-block rounded-full bg-blue-200 px-4 py-2 text-sm font-medium text-blue-800 dark:bg-blue-900/70 dark:text-blue-200">
+                {exp.data.startDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}
+                {exp.data.current ? ' - 至今' : ` - ${exp.data.endDate?.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })}`}
+              </span>
+            </div>
+
+            <!-- 学校和专业 -->
+            <h3 class="mb-2 text-2xl font-bold text-gray-900 dark:text-white">{exp.data.position}</h3>
+            <p class="mb-6 text-xl text-blue-600 dark:text-blue-400">{exp.data.company}</p>
+
+            <!-- 内容 -->
+            <div class="prose prose-gray dark:prose-invert max-w-none prose-sm" set:html={exp.renderedHtml} />
+
+            <!-- 标签 -->
+            {exp.data.tags && Array.isArray(exp.data.tags) && exp.data.tags.length > 0 && (
+              <div class="mt-6 flex flex-wrap gap-2">
+                {exp.data.tags.map((tag) => (
+                  <span class="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {renderedEduExperiences.length === 0 && (
+        <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-xl p-12 text-center text-gray-600 dark:text-gray-400">
+          <p>暂无教育经历</p>
         </div>
       )}
     </div>
   </section>
 </Layout>
+
+<style>
+  .writing-mode-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+  }
+
+  /* 柔和的红色渐变背景 - 使用网格纹理 */
+  .gradient-red {
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.02) 2px,
+        rgba(0, 0, 0, 0.02) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.02) 2px,
+        rgba(0, 0, 0, 0.02) 4px
+      ),
+      linear-gradient(to bottom, #fee2e2 0%, #fca5a5 25%, #ef4444 50%, #fca5a5 75%, #fee2e2 100%);
+  }
+
+  /* 柔和的蓝色渐变背景 - 使用网格纹理 */
+  .gradient-blue {
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.02) 2px,
+        rgba(0, 0, 0, 0.02) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.02) 2px,
+        rgba(0, 0, 0, 0.02) 4px
+      ),
+      linear-gradient(to bottom, #dbeafe 0%, #93c5fd 25%, #3b82f6 50%, #93c5fd 75%, #dbeafe 100%);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .gradient-red {
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(255, 255, 255, 0.03) 2px,
+          rgba(255, 255, 255, 0.03) 4px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 2px,
+          rgba(255, 255, 255, 0.03) 2px,
+          rgba(255, 255, 255, 0.03) 4px
+        ),
+        linear-gradient(to bottom, #450a0a 0%, #7f1d1d 25%, #991b1b 50%, #7f1d1d 75%, #450a0a 100%);
+    }
+
+    .gradient-blue {
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(255, 255, 255, 0.03) 2px,
+          rgba(255, 255, 255, 0.03) 4px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 2px,
+          rgba(255, 255, 255, 0.03) 2px,
+          rgba(255, 255, 255, 0.03) 4px
+        ),
+        linear-gradient(to bottom, #1e3a8a 0%, #1e40af 25%, #2563eb 50%, #1e40af 75%, #1e3a8a 100%);
+    }
+  }
+
+  /* 确保使用微软雅黑 bold */
+  :global(*) {
+    font-family: 'Microsoft YaHei', '微软雅黑', sans-serif !important;
+    font-weight: 700;
+  }
+</style>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>粗颗粒留白渐变界面</title>
+    <style>
+        :root {
+            --top-color: #3b82f6;    /* 上部蓝色 */
+            --bottom-color: #f472b6; /* 下部粉色 */
+            --middle-white: #ffffff; /* 中间过渡的白色 */
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: var(--middle-white);
+            overflow: hidden;
+        }
+
+        .grainy-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            /* 1. 增加过渡宽度：从 20% 到 80% 都是渐变区
+               2. 加入白色中转：让交界处看起来更清爽，有“留白”感
+            */
+            background: linear-gradient(
+                to bottom, 
+                var(--top-color) 0%, 
+                var(--top-color) 20%, 
+                var(--middle-white) 50%, 
+                var(--bottom-color) 80%, 
+                var(--bottom-color) 100%
+            );
+            
+            /* 应用下方的粗颗粒滤镜 */
+            filter: url(#coarse-grain);
+        }
+
+        /* 装饰性文字，放在滤镜层之外，保证文字清晰 */
+        .label {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-family: "Segoe UI", sans-serif;
+            font-weight: 900;
+            font-size: 8vw;
+            letter-spacing: -2px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .label-top { top: 10%; color: rgba(255,255,255,0.8); }
+        .label-bottom { bottom: 10%; color: rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body>
+
+    <div class="label label-top">UPPER</div>
+    <div class="label label-bottom">LOWER</div>
+
+    <div class="grainy-container"></div>
+
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <filter id="coarse-grain">
+            <feTurbulence 
+                type="fractalNoise" 
+                baseFrequency="0.25" 
+                numOctaves="1" 
+                result="noise" />
+            
+            <feDisplacementMap 
+                in="SourceGraphic" 
+                in2="noise" 
+                scale="250" 
+                xChannelSelector="R" 
+                yChannelSelector="G" />
+        </filter>
+    </svg>
+
+</body>
+</html>

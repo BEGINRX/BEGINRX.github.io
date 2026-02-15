@@ -21,13 +21,13 @@ const uniqueNames = [...new Set(messages.map((m: any) => m.name))];
 ---
 
 <Layout title="留言板 - 我的个人网站" description="给我留言吧">
-  <section class="py-16">
+  <section class="py-16 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-blue-950">
     <div class="container">
-      <h1 class="mb-8 text-center text-4xl font-bold">留言板</h1>
+      <h1 class="mb-8 text-center text-4xl font-bold text-blue-900 dark:text-blue-100">留言板</h1>
 
       <!-- 留言表单 -->
       <div class="card mb-12">
-        <h2 class="mb-6 text-2xl font-semibold">写留言</h2>
+        <h2 class="mb-6 text-2xl font-semibold text-blue-900 dark:text-blue-100">写留言</h2>
         <form
           id="guestbook-form"
           class="space-y-4"
@@ -35,7 +35,7 @@ const uniqueNames = [...new Set(messages.map((m: any) => m.name))];
           method="POST"
         >
           <div>
-            <label for="name" class="mb-2 block text-sm font-medium">
+            <label for="name" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-100">
               你的名字 <span class="text-gray-500">(可选，默认：lxr的朋友)</span>
             </label>
             <input
@@ -43,12 +43,12 @@ const uniqueNames = [...new Set(messages.map((m: any) => m.name))];
               id="name"
               name="name"
               placeholder="lxr的朋友"
-              class="w-full rounded-lg border bg-gray-50 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:bg-gray-800"
+              class="w-full rounded-lg border border-blue-200 bg-gray-50 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-blue-700 dark:bg-gray-800"
             />
           </div>
 
           <div>
-            <label for="message" class="mb-2 block text-sm font-medium">
+            <label for="message" class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-100">
               留言内容 <span class="text-red-500">*</span>
             </label>
             <textarea
@@ -57,12 +57,12 @@ const uniqueNames = [...new Set(messages.map((m: any) => m.name))];
               required
               rows="4"
               placeholder="写下你的留言..."
-              class="w-full rounded-lg border bg-gray-50 px-4 py-2 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:bg-gray-800"
+              class="w-full rounded-lg border border-blue-200 bg-gray-50 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-blue-700 dark:bg-gray-800"
             ></textarea>
           </div>
 
           <div>
-            <label class="mb-2 block text-sm font-medium">可见性</label>
+            <label class="mb-2 block text-sm font-medium text-gray-900 dark:text-gray-100">可见性</label>
             <div class="flex gap-4">
               <label class="flex items-center gap-2 cursor-pointer">
                 <input
@@ -70,7 +70,7 @@ const uniqueNames = [...new Set(messages.map((m: any) => m.name))];
                   name="visibility"
                   value="public"
                   checked
-                  class="text-primary-600 focus:ring-primary-500"
+                  class="text-blue-700 focus:ring-blue-500"
                 />
                 <span>公开</span>
               </label>
@@ -79,7 +79,7 @@ const uniqueNames = [...new Set(messages.map((m: any) => m.name))];
                   type="radio"
                   name="visibility"
                   value="private"
-                  class="text-primary-600 focus:ring-primary-500"
+                  class="text-blue-700 focus:ring-blue-500"
                 />
                 <span>仅 lxr 可见</span>
               </label>
@@ -104,7 +104,7 @@ const uniqueNames = [...new Set(messages.map((m: any) => m.name))];
 
       <!-- 留言列表 -->
       <div class="mb-8">
-        <h2 class="mb-6 text-2xl font-semibold">
+        <h2 class="mb-6 text-2xl font-semibold text-blue-900 dark:text-blue-100">
           公开留言 ({messages.length})
         </h2>
 
@@ -113,7 +113,7 @@ const uniqueNames = [...new Set(messages.map((m: any) => m.name))];
             {messages.map((msg: any) => (
               <div class="card">
                 <div class="mb-3 flex items-center gap-3">
-                  <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
+                  <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
                     {msg.name?.[0]?.toUpperCase() || '?'}
                   </div>
                   <div>
@@ -141,8 +141,8 @@ const uniqueNames = [...new Set(messages.map((m: any) => m.name))];
       </div>
 
       <!-- 说明 -->
-      <div class="card bg-gray-50 dark:bg-gray-800/50">
-        <h3 class="mb-2 font-semibold">关于留言板</h3>
+      <div class="card bg-blue-50 dark:bg-blue-900/20">
+        <h3 class="mb-2 font-semibold text-blue-900 dark:text-blue-100">关于留言板</h3>
         <ul class="list-inside list-disc space-y-1 text-sm text-gray-600 dark:text-gray-400">
           <li>留言发送到邮箱，经 lxr 审核后显示</li>
           <li>请文明发言，遵守网络礼仪</li>
@@ -152,3 +152,9 @@ const uniqueNames = [...new Set(messages.map((m: any) => m.name))];
     </div>
   </section>
 </Layout>
+
+<style>
+  .btn-primary {
+    @apply bg-blue-700 hover:bg-blue-800 text-white;
+  }
+</style>
